@@ -1,13 +1,8 @@
-provider "aws" {
-  region = "us-west-2"
-}
+data "aws_ecr_authorization_token" "token" {}
 
-resource "aws_ecr_repository" "my_lambda_repo" {
-  name = "my-lambda-repo"
-}
 
-data "aws_ecr_repository" "my_lambda_repo" {
-  name = aws_ecr_repository.my_lambda_repo.name
+data "aws_ecr_repository" "repository" {
+  name = var.ecr_repository_name
 }
 
 data "aws_caller_identity" "current" {}
@@ -39,8 +34,10 @@ resource "aws_lambda_function" "docker_lambda" {
   role          = aws_iam_role.lambda_exec.arn
   package_type  = "Image"
 
-  image_uri = "${data.aws_account_id.current.account_id}.dkr.ecr.${var.region}.amazonaws.com/${aws_ecr_repository.my_lambda_repo.name}:latest"
+  image_uri = "${data.aws_caller_identity.current.account_id}.dkr.ecr.${var.region}.amazonaws.com/${data.aws_ecr_repository.repository.name}:latest"
 }
+
+
 
 output "lambda_function_name" {
   value = aws_lambda_function.docker_lambda.function_name

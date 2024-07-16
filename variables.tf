@@ -1,7 +1,13 @@
-variable "aws_region" {
+variable "region" {
   description = "The AWS region where resources will be created"
   type        = string
   default     = "us-west-2"
+}
+
+variable "ecr_repository_name" {
+  description = "Name of the ECR repository. Easier to create this manually to avoid chicken and egg scenario"
+  type        = string
+  default     = ""
 }
 
 variable "tags" {
